@@ -180,7 +180,10 @@ async def youtube(ctx, url):
 
 
 async def play_rps(message) -> int:
-    emojis = ['✊', '🤚', '✌️']
+    rock = '\u270A'
+    paper = '\u270B'
+    scissors = '\u270C'
+    emojis = [rock, paper, scissors]
     for emoji in emojis:
         await message.add_reaction(emoji)
     alfred_selection = emojis[random.choice(range(0, 3))]
@@ -200,7 +203,7 @@ async def play_rps(message) -> int:
         if alfred_selection == player_selection:
             await message.channel.send('It\'s a draw.')
             return 0
-        elif (alfred_selection == '✊' and player_selection == '✌️') or (alfred_selection == '✌️' and player_selection == '🤚️') or (alfred_selection == '🤚️' and player_selection == '✊'):
+        elif (alfred_selection == rock and player_selection == scissors) or (alfred_selection == scissors and player_selection == paper) or (alfred_selection == paper and player_selection == rock):
             await message.channel.send('I won.')
             return 1
         else:
