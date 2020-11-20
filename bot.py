@@ -247,7 +247,10 @@ async def play_hangman(ctx, word):
         else:
             message_content = message.content.upper()
             if len(message_content) == 1:
-                if message_content not in prev_letters:
+                if message_content in prev_letters:
+                    await ctx.send('You tried that letter before. Pick another one.')
+                    continue
+                else:
                     prev_letters.append(message_content)
                 if message_content in word:
                     for i in range(len(word)):
