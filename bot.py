@@ -267,10 +267,9 @@ async def play_hangman(ctx, word):
                     await ctx.send(' '.join(current_string))
                     if tries == 6:
                         await ctx.send('Game Over. The word was {}.'.format(''.join(word)))
-                        await ctx.invoke('You failed, Master {}.'.format(username_map.get(ctx.author.name)))
                         await ctx.invoke(bot.get_command('fall'))
                         return
-            elif message_content == 'end':
+            elif message_content == 'END':
                 await ctx.send('Alright. Game over.')
                 return
             else:
