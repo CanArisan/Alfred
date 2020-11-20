@@ -37,7 +37,7 @@ async def on_ready():
     # Send a message to general text channels
     for server in servers:
         channel = list(filter(lambda x: 'gene' in x.name, server.channels))[0]
-        await channel.send('I was just updated by Master Can.')
+        await channel.send('I was just updated by Master {}.'.format(MY_NAME))
 
 
 @bot.event
@@ -45,7 +45,7 @@ async def on_member_join(member):
     server = member.guild
     # Send a message to the general text channel
     channel = list(filter(lambda x: 'gene' in x.name, server.channels))[0]
-    with open(os.path.join('images', 'Wurst.jpeg'), 'rb') as f:
+    with open(os.path.join('images', 'Welcome.jpeg'), 'rb') as f:
         picture = discord.File(f)
         await channel.send(f'Welcome Master {member.name} to the Wayne Mansion. '
                            f'I am at your service. Type !help to learn about my services.',
