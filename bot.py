@@ -257,17 +257,16 @@ async def play_hangman(ctx, word):
                         if word[i] == message_content:
                             current_string[i] = message_content
                             if '#' not in current_string:
-                                await ctx.send(' '.join(current_string))
-                                await ctx.send('You won!')
+                                await ctx.send(' '.join(current_string) + '\n' + 'You won!')
                                 return
-                    await ctx.send(hangman_visuals[tries])
-                    await ctx.send('Letters tried: {}'.format(','.join(sorted(prev_letters))))
-                    await ctx.send(' '.join(current_string))
+                    response = '{}\nLetters tried: {}\n{}'\
+                        .format(hangman_visuals[tries], ','.join(sorted(prev_letters)), ' '.join(current_string))
+                    await ctx.send(response)
                 else:
                     tries += 1
-                    await ctx.send(hangman_visuals[tries])
-                    await ctx.send('Letters tried: {}'.format(', '.join(sorted(prev_letters))))
-                    await ctx.send(' '.join(current_string))
+                    response = '{}\nLetters tried: {}\n{}' \
+                        .format(hangman_visuals[tries], ','.join(sorted(prev_letters)), ' '.join(current_string))
+                    await ctx.send(response)
                     if tries == 6:
                         await ctx.send('Game Over. The word was {}.'.format(''.join(word)))
                         await ctx.invoke(bot.get_command('fall'))
