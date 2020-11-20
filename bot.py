@@ -13,6 +13,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 GUILDS = os.getenv('DISCORD_GUILDS').split(',')
 MY_USER = os.getenv('MY_USER')
 MY_NAME = os.getenv('MY_NAME')
+UPDATE_NOTIFICATION_GUILD = os.getenv('UPDATE_NOTIFICATION_GUILD')
 
 intents = discord.Intents.default()
 intents.members = True
@@ -33,11 +34,10 @@ for pair in os.getenv('PLAYLISTS').split(','):
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
-    servers = bot.guilds
+    server = discord.utils.get(bot.guilds, name=UPDATE_NOTIFICATION_GUILD)
     # Send a message to general text channels
-    for server in servers:
-        channel = list(filter(lambda x: 'gene' in x.name, server.channels))[0]
-        await channel.send('I was just updated by Master {}.'.format(MY_NAME))
+    channel = list(filter(lambda x: 'gene' in x.name, server.channels))[0]
+    await channel.send('I was just updated by Master {}.'.format(MY_NAME))
 
 
 @bot.event
@@ -57,6 +57,7 @@ async def on_message(message):
     if message.author == bot.user:
         if 'I am ready for rock, paper, scissors. Make your selection' in message.content:
             result = await play_rps(message)
+            print('Result: {}'.format(result))
     await bot.process_commands(message)
 
 

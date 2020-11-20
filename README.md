@@ -11,6 +11,7 @@ For Alfred to work properly, you need to update the images folder and the enviro
 
 	DISCORD_TOKEN=<Bot token> // Contact me to get this
 	DISCORD_GUILDS=<Guild_name1,Guild_name2,...>
+	UPDATE_NOTIFICATION_GUILD=<Guild name that you want to receive update notifications> // Must be filled
 	MY_USER=<Discord Account name of the main "Master" of Alfred>
 	MY_NAME=<Name of the main "Master" of Alfred>
 	USERS=<Discord_name1:Real_name1,Discord_name2:Real_name2,...> // For all users in the guild
