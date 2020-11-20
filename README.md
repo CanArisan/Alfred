@@ -3,11 +3,11 @@
 A multi purpose discord bot resembling Alfred Pennyworth, the loyal butler of Bruce Wayne.
 
 
-# Local Setup
+### Local Setup
 
 For Alfred to work properly, you need to update the images folder and the environment variables in the .env file.
 
-.env:
+**.env:**
 
 	DISCORD_TOKEN=<Bot token> // Contact me to get this
 	DISCORD_GUILDS=<Guild_name1,Guild_name2,...>
@@ -16,7 +16,7 @@ For Alfred to work properly, you need to update the images folder and the enviro
 	USERS=<Discord_name1:Real_name1,Discord_name2:Real_name2,...> // For all users in the guild
 	PLAYLISTS=<Spotify_list_name1;Spotify_link1,Spotify_list_name2;Spotify_link2,...>
 
-images: 
+**images:** 
 
 Add a welcome image to be shown to new users joining your servers. Name it as:
 
