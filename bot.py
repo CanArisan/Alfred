@@ -190,7 +190,7 @@ async def youtube(ctx, url):
 async def hangman(ctx):
     global commands_active
     commands_active = False
-    await ctx.send('I am ready to play hangman. You have 6 guesses in total.')
+    await ctx.send('I am ready to play hangman. You have 7 guesses in total.')
     await ctx.send('You can guess a letter by typing it.')
     await ctx.send('I won\'t listen to your other commands until the game ends. To end the game type: end')
     word = random.sample(english_words_set, 1)[0].upper()
@@ -240,7 +240,7 @@ async def play_hangman(ctx, word):
     channel = ctx.message.channel
     current_string = ['#'] * len(word)
     prev_letters = []
-    while tries < 6:
+    while tries < 7:
         message = channel.last_message
         if message.author == bot.user:
             await asyncio.sleep(0.1)
@@ -267,7 +267,7 @@ async def play_hangman(ctx, word):
                     response = '{}\nLetters tried: {}\n{}' \
                         .format(hangman_visuals[tries], ','.join(sorted(prev_letters)), ' '.join(current_string))
                     await ctx.send(response)
-                    if tries == 6:
+                    if tries == 7:
                         await ctx.send('Game Over. The word was {}.'.format(''.join(word)))
                         await ctx.invoke(bot.get_command('fall'))
                         return
