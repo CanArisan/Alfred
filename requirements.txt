@@ -12,3 +12,4 @@ python-dotenv==0.15.0
 typing-extensions==3.7.4.3
 yarl==1.5.1
 youtube-dl==2020.11.19
+english-words==1.0.3

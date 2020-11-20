@@ -4,6 +4,7 @@ import random
 import audioread
 import discord
 
+from english_words import english_words_set
 from dotenv import load_dotenv
 from discord.ext import commands
 from YTDLSource import YTDLSource
@@ -20,6 +21,8 @@ intents.members = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+commands_active = True
+
 username_map = {}
 for pair in os.getenv('USERS').split(','):
     mapping = pair.split(':')
@@ -29,6 +32,9 @@ playlist_dict = {}
 for pair in os.getenv('PLAYLISTS').split(','):
     mapping = pair.split(';')
     playlist_dict[mapping[0]] = mapping[1]
+
+with open('hangman_visual.txt', 'r') as f:
+    hangman_visuals = f.read().split(':')
 
 
 @bot.event
@@ -58,7 +64,8 @@ async def on_message(message):
         if 'I am ready for rock, paper, scissors. Make your selection' in message.content:
             result = await play_rps(message)
             print('Result: {}'.format(result))
-    await bot.process_commands(message)
+    if commands_active:
+        await bot.process_commands(message)
 
 
 @bot.command(name='hello', help='Greet Alfred.', aliases=['hi'])
@@ -179,6 +186,20 @@ async def youtube(ctx, url):
         await ctx.send('You are not in a voice channel, Master {}.'.format(username_map.get(ctx.author.name)))
 
 
+@bot.command(name='hangman', help='Play hangman with Alfred.', aliases=['hang'])
+async def hangman(ctx):
+    global commands_active
+    commands_active = False
+    await ctx.send('I am ready to play hangman. You have 6 guesses in total.')
+    await ctx.send('You can guess a letter by typing it.')
+    await ctx.send('I won\'t listen to your other commands until the game ends. To end the game type: end')
+    word = random.sample(english_words_set, 1)[0].upper()
+    print('My word: {}'.format(word))
+    await ctx.send('Here\'s my word: {}\n{}'.format(' '.join(['#' * len(word)]), hangman_visuals[0]))
+    await play_hangman(ctx, list(word))
+    commands_active = True
+
+
 async def play_rps(message) -> int:
     rock = '\u270A'
     paper = '\u270B'
@@ -212,6 +233,49 @@ async def play_rps(message) -> int:
     else:
         await message.channel.send('Time\'s up.')
         return -1
+
+
+async def play_hangman(ctx, word):
+    tries = 0
+    channel = ctx.message.channel
+    current_string = ['#'] * len(word)
+    prev_letters = []
+    while tries < 6:
+        message = channel.last_message
+        if message.author == bot.user:
+            await asyncio.sleep(0.1)
+        else:
+            message_content = message.content.upper()
+            if len(message_content) == 1:
+                if message_content not in prev_letters:
+                    prev_letters.append(message_content)
+                if message_content in word:
+                    for i in range(len(word)):
+                        if word[i] == message_content:
+                            current_string[i] = message_content
+                            if '#' not in current_string:
+                                await ctx.send(' '.join(current_string))
+                                await ctx.send('You won!')
+                                return
+                    await ctx.send(hangman_visuals[tries])
+                    await ctx.send('Letters tried: {}'.format(','.join(sorted(prev_letters))))
+                    await ctx.send(' '.join(current_string))
+                else:
+                    tries += 1
+                    await ctx.send(hangman_visuals[tries])
+                    await ctx.send('Letters tried: {}'.format(', '.join(sorted(prev_letters))))
+                    await ctx.send(' '.join(current_string))
+                    if tries == 6:
+                        await ctx.send('Game Over. The word was {}.'.format(''.join(word)))
+                        await ctx.invoke('You failed, Master {}.'.format(username_map.get(ctx.author.name)))
+                        await ctx.invoke(bot.get_command('fall'))
+                        return
+            elif message_content == 'end':
+                await ctx.send('Alright. Game over.')
+                return
+            else:
+                await ctx.send('That was not a letter. Please enter a single letter or type "end" if you are bored.')
+    return
 
 
 bot.run(TOKEN)
