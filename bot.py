@@ -64,7 +64,7 @@ async def on_message(message):
         if 'I am ready for rock, paper, scissors. Make your selection' in message.content:
             result = await play_rps(message)
             print('Result: {}'.format(result))
-    if commands_active:
+    if commands_active and not message.author.bot:
         await bot.process_commands(message)
 
 
