@@ -29,12 +29,6 @@ class DataLoaderTest(TestCase):
     classes = ['bird', 'cat', 'dog']
 
     def test_dataset_initial_state(self):
-        print(
-            "Dataset Length:\t", len(self.dataset),
-            "\nFirst Element:\t", self.dataset[0],
-            "\nLast Element:\t", self.dataset[-1],
-        )
-
         num_classes = len(self.classes)
         samples_per_class = 7
         for label, cls in enumerate(sorted(self.classes)):
