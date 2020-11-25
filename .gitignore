@@ -1,6 +1,5 @@
 .idea
 images
-face_recognition/dataset
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
