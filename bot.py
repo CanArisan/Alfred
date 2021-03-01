@@ -15,6 +15,7 @@ GUILDS = os.getenv('DISCORD_GUILDS').split(',')
 MY_USER = os.getenv('MY_USER')
 MY_NAME = os.getenv('MY_NAME')
 UPDATE_NOTIFICATION_GUILD = os.getenv('UPDATE_NOTIFICATION_GUILD')
+PERSONAL_NOTIFICATION_CHANNEL = os.getenv('PERSONAL_NOTIFICATION_CHANNEL', default='gene')
 
 intents = discord.Intents.default()
 intents.members = True
@@ -42,7 +43,7 @@ async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     server = discord.utils.get(bot.guilds, name=UPDATE_NOTIFICATION_GUILD)
     # Send a message to general text channels
-    channel = list(filter(lambda x: 'gene' in x.name, server.channels))[0]
+    channel = list(filter(lambda x: 'gene' in x.name or PERSONAL_NOTIFICATION_CHANNEL in x.name, server.channels))[0]
     await channel.send('I was just updated by Master {}.'.format(MY_NAME))
 
 
