@@ -1,6 +1,7 @@
 .idea
 images
 face_recognition/dataset
+face_recognition/lightning_logs
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

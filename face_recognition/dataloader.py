@@ -1,51 +1,47 @@
-"""Definition of Dataloader"""
+import os
 
+import pandas as pd
 import numpy as np
+import torch
 
 
-class DataLoader:
-    """
-    Dataloader Class
-    Defines an iterable batch-sampler over a given dataset
-    """
-    def __init__(self, dataset, batch_size=1, shuffle=False, drop_last=False):
-        """
-        :param dataset: dataset from which to load the data
-        :param batch_size: how many samples per batch to load
-        :param shuffle: set to True to have the data reshuffled at every epoch
-        :param drop_last: set to True to drop the last incomplete batch,
-            if the dataset size is not divisible by the batch size.
-            If False and the size of dataset is not divisible by the batch
-            size, then the last batch will be smaller.
-        """
-        self.dataset = dataset
-        self.batch_size = batch_size
-        self.shuffle = shuffle
-        self.drop_last = drop_last
-
-    def __iter__(self):
-        if self.shuffle:
-            index_iterator = np.random.permutation(len(self.dataset))  # define indices as iterator
+class Dataset():
+    """Dataset for facial keypoint detection"""
+    def __init__(self, root, mode='train', transform=None):
+        self.root_path = root
+        if mode == 'train':
+            file_name = "training.csv"
+        elif mode == 'dev':
+            file_name = 'val.csv'
         else:
-            index_iterator = range(len(self.dataset))  # define indices as iterator
+            file_name = 'test.csv'
+        csv_file = os.path.join(self.root_path, file_name)
+        self.key_pts_frame = pd.read_csv(csv_file)
+        self.key_pts_frame.dropna(inplace=True)
+        self.key_pts_frame.reset_index(drop=True, inplace=True)
+        self.transform = transform
 
-        batch = {'labels': np.array([])}
-        image_counter = 0
-        for index in index_iterator:  # iterate over indices using the iterator
-            image_dict = self.dataset[index]
-            batch['image{}'.format(image_counter)] = image_dict['image']
-            batch['labels'] = np.append(batch['labels'], image_dict['label'])
-            image_counter += 1
-            if len(batch['labels']) == self.batch_size:
-                yield batch  # use yield keyword to define a iterable generator
-                batch = {'labels': np.array([])}
-                image_counter = 0
-        if not self.drop_last and len(batch) != 0:
-            yield batch
+    @staticmethod
+    def _get_image(idx, key_pts_frame):
+        img_str = key_pts_frame.loc[idx]['Image']
+        img = np.array([
+            int(item) for item in img_str.split()
+        ]).reshape((96, 96))
+        return np.expand_dims(img, axis=2).astype(np.uint8)
+
+    @staticmethod
+    def _get_keypoints(idx, key_pts_frame, shape=(15, 2)):
+        keypoint_cols = list(key_pts_frame.columns)[:-1]
+        key_pts = key_pts_frame.iloc[idx][keypoint_cols].values.reshape(shape)
+        key_pts = (key_pts.astype(np.float) - 48.0) / 48.0
+        return torch.from_numpy(key_pts).float()
 
     def __len__(self):
-        modulo = len(self.dataset) % self.batch_size
-        length = len(self.dataset) // self.batch_size
-        if not self.drop_last and modulo != 0:
-            length += 1
-        return length
+        return self.key_pts_frame.shape[0]
+
+    def __getitem__(self, idx):
+        image = self._get_image(idx, self.key_pts_frame)
+        keypoints = self._get_keypoints(idx, self.key_pts_frame)
+        if self.transform:
+            image = self.transform(image)
+        return {'image': image, 'keypoints': keypoints}
