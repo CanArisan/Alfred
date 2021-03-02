@@ -16,7 +16,7 @@ test_dataset = Dataset(
 
 print('Test samples: {}'.format(len(test_dataset)))
 
-model: Network = Network({})  # TODO: Change this to read from saved model
+model = torch.load(os.path.join(os.getcwd(), 'model'))
 
 
 def evaluate_model(model, dataset):

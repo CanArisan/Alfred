@@ -41,3 +41,5 @@ trainer = pl.Trainer(
 model = Network(hparams)
 
 trainer.fit(model, train_dataloader, val_dataloader)
+
+torch.save(model, os.path.join(os.getcwd(), 'model'))
